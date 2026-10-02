@@ -37,6 +37,7 @@ function calculateBill() {
     // Optional: Add 5% surcharge
     let surcharge = bill * 0.05;
     let total = bill + surcharge;
+    saveBillToServer(name, units, total);
 
     document.getElementById("result").innerHTML =
         `<h3>Bill Summary</h3>
@@ -52,4 +53,27 @@ function resetForm() {
     document.getElementById("name").value = "";
     document.getElementById("units").value = "";
     document.getElementById("result").innerHTML = "";
+}
+
+async function saveBillToServer(name, units, total) {
+    try {
+        const response = await fetch("http://localhost:3000/api/bills", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: name,
+                units: units,
+                total: total
+            })
+        });
+
+        const data = await response.json();
+
+        console.log("Bill saved:", data);
+
+    } catch (error) {
+        console.error("Could not save bill:", error);
+    }
 }
